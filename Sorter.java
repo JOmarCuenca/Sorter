@@ -86,7 +86,12 @@ public class Sorter {
      * @param arr Arreglo a ordenar
      */
     public static void heapSort(int[] arr){
-        
+        for(int i=arr.length/2;i>=0;i--)
+            heapify(arr,i,arr.length-1);
+        for(int i=arr.length-1;i>0;i--){
+            change(arr,0,i);
+            heapify(arr,0,i-1);
+        }
     }
     
     /**
@@ -94,8 +99,20 @@ public class Sorter {
      * @param tree Arbol binario a ordenar
      * @param ord Limite sobre se encuentra la parte ordenada del arreglo
      */
-    public static void heapify(int[] tree,int ord){
+    private static void heapify(int[] tree,int ord,int stop){
+        int hijoi=2*ord,hijod=hijoi+1;
+        int max=ord;
         
+        if(hijoi<=stop && tree[hijoi]>tree[ord])
+            max=hijoi;
+        
+        if(hijod<=stop && tree[hijod]>tree[max])
+            max=hijod;
+        
+        if(max!=ord){
+            change(tree,ord,max);
+            heapify(tree,max,stop);
+        }
     }
     
     /**
@@ -130,7 +147,7 @@ public class Sorter {
      * @param walli parametro cobre el cual el arreglo comienza a ordenar
      * @param pivot parametro sobre el cual termina de arreglar y es numero sobre el cual se centra el ordenamiento
      */
-    public static void quickSort(int[] A,int walli,int pivot){
+    private static void quickSort(int[] A,int walli,int pivot){
         if(pivot>walli){
             int wall=walli;
             for(int c=wall;c<pivot;c++){
@@ -260,7 +277,7 @@ public class Sorter {
      * @param a posicion del primer elemento a cambiar
      * @param b posicion del segundo elemento a cambiar
      */
-    public static void change(int[] A,int a,int b){
+    private static void change(int[] A,int a,int b){
         int temp=A[a];
         A[a]=A[b];
         A[b]=temp;
