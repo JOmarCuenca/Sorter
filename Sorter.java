@@ -240,10 +240,10 @@ public class Sorter {
           thrash2=mergeSort(r,show);
           thrash[0]+=thrash2[0];
           thrash[1]+=thrash2[1];
-          merge(arr,l, r,thrash,show);
-          if(show)
-            System.out.println(Arrays.toString(arr));
+          merge(arr,l, r,thrash);
         }
+        if(show)
+            System.out.println(Arrays.toString(arr));
         return thrash;
     }
     
@@ -255,7 +255,7 @@ public class Sorter {
      * @param r punto de terminado 
      * @param thrash el recolector de datos para que el arreglo lleve cuenta de las comparaciones y de los intercambios
      */
-    private static void merge(int[] arr, int[] l, int[] r,long[] thrash,boolean show) {
+    private static void merge(int[] arr, int[] l, int[] r,long[] thrash) {
         int i=0,j=0,k=0;
         
         while(i<l.length && j<r.length){
@@ -265,22 +265,21 @@ public class Sorter {
                 i++;k++;
             }
             else{
-                thrash[1]++;
                 arr[k]=r[j];
                 j++;k++;
             }
-            if(show)
-                System.out.println(Arrays.toString(arr));
+            thrash[1]++;
         }
-        while(k<arr.length){
+        while(i<l.length || j<r.length){
             if(i<l.length){
                 arr[k]=l[i];
-                thrash[1]++;
+                i++;
             }
-            if(j<r.length)
+            if(j<r.length){
                 arr[k]=r[j];
-            if(show)
-                System.out.println(Arrays.toString(arr));
+                j++;
+            }
+            thrash[1]++;
             k++;
         }
     }
