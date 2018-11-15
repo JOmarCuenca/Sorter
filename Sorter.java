@@ -9,6 +9,8 @@ package Main;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 /**
  *
@@ -21,11 +23,10 @@ public class Sorter {
      * @param arr Ordena el arreglo de int[] que entra como paramentro
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
-    public static long[] selectionSort(int[] arr){
+    public static long[] selectionSort(int[] arr,boolean show){
         long operaciones=0;
         long comparaciones=0;
         for(int x=0;x<arr.length;x++){
-            comparaciones++;
             int pos=x;
             for(int i=x+1;i<arr.length;i++){
                 comparaciones++;
@@ -33,6 +34,8 @@ public class Sorter {
                 if(low>arr[i])
                     pos=i;
             }
+            if(show)
+                System.out.println(Arrays.toString(arr));
             operaciones++;
             int temp=arr[x];
             arr[x]=arr[pos];
@@ -43,11 +46,11 @@ public class Sorter {
     }
     
     /**
-     * Bubblesort que ordena un arreglo en O(n^2)
+     * Bubblesort que ordena un arreglo en Theta(n^2)
      * @param arr 
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
-    public static long[] bubbleSort(int[] arr){
+    public static long[] bubbleSort(int[] arr,boolean show){
         long comparacion=0;
         long switches=0;
         for(int x=0;x<arr.length;x++){
@@ -59,7 +62,13 @@ public class Sorter {
                     arr[y]=arr[y+1];
                     arr[y+1]=temp;
                 }
+                if(show)
+                    System.out.println(Arrays.toString(arr));
             }
+            if(switches==0){
+                    long[] res = {comparacion,switches};
+                    return res;
+                }
         }
         long[] res = {comparacion,switches};
         return res;
@@ -70,7 +79,7 @@ public class Sorter {
      * @param arr arreglo en int[] que es ordenado
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
-    public static long[] insertionSort(int[] arr){
+    public static long[] insertionSort(int[] arr,boolean show){
         long comparaciones=0,operaciones=0;
         for(int i=1;i<arr.length;i++){
             int k=arr[i];
@@ -81,6 +90,8 @@ public class Sorter {
                 arr[j+1]=arr[j];
                 j--;
             }
+            if(show)
+                System.out.println(Arrays.toString(arr));
             arr[j+1]=k;
         }
         long[] res = {comparaciones,operaciones};
@@ -88,11 +99,11 @@ public class Sorter {
     }
     
     /**
-     * heapSort con complejidad O(n*lg n)
+     * heapSort con complejidad Theta(n*lg n)
      * @param arr Arreglo a ordenar
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
-    public static long[] heapSort(int[] arr){
+    public static long[] heapSort(int[] arr,boolean show){
         long comparaciones=0,switches=0;
         long[] thrash;
         for(int i=arr.length/2;i>=0;i--){
@@ -100,10 +111,14 @@ public class Sorter {
             comparaciones+=thrash[0];
             switches+=thrash[1];
         }
+        if(show)
+            System.out.println(Arrays.toString(arr));
         
         for(int i=arr.length-1;i>0;i--){
             change(arr,0,i);switches++;
             thrash=heapify(arr,0,i-1);
+            if(show)
+                System.out.println(Arrays.toString(arr));
             comparaciones+=thrash[0];
             switches+=thrash[1];
         }
@@ -142,11 +157,12 @@ public class Sorter {
     
     /**
      * Metodo quickSort con complejidad O(n*lg n)
-     * Ironicamente funciona bastante bien hasta con 10,000,000 elementos
+     * sin embargo el algoritmo puede llegar a ser O(n^2) 
+     * en los peores de los casos.
      * @param A Arreglo de integers a ser ordenados 
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
-    public static long[] quickSort(int[] A){
+    public static long[] quickSort(int[] A,boolean show){
         long comparaciones=0,switches=0;
         if(A.length>2){
             int w=0, pivot=A.length-1;
@@ -154,12 +170,16 @@ public class Sorter {
                 comparaciones++;
                 if(A[c]<A[pivot]){
                     change(A,w,c);switches++;
+                    if(show)
+                        System.out.println(Arrays.toString(A));
                     w++;
                 }
             }
             change(A,w,pivot);switches++;
-            quickSort(A,0,w-1,comparaciones,switches);
-            quickSort(A,w+1,A.length-1,comparaciones,switches);
+            if(show)
+                System.out.println(Arrays.toString(A));
+            quickSort(A,0,w-1,comparaciones,switches,show);
+            quickSort(A,w+1,A.length-1,comparaciones,switches,show);
         }
         long[] res = {comparaciones,switches};
         return res;
@@ -173,7 +193,7 @@ public class Sorter {
      * @param walli parametro cobre el cual el arreglo comienza a ordenar
      * @param pivot parametro sobre el cual termina de arreglar y es numero sobre el cual se centra el ordenamiento
      */
-    private static void quickSort(int[] A,int walli,int pivot,long comp,long sw){
+    private static void quickSort(int[] A,int walli,int pivot,long comp,long sw,boolean show){
         comp++;
         if(pivot>walli){
             int wall=walli;
@@ -181,23 +201,26 @@ public class Sorter {
                 comp++;
                 if(A[c]<A[pivot]){
                     change(A,c,wall);sw++;
+                    if(show)
+                        System.out.println(Arrays.toString(A));
                     wall++;
                 }
             }
             change(A,wall,pivot);sw++;
-            quickSort(A,walli,wall-1,comp,sw);
-            quickSort(A,wall+1,pivot,comp,sw);
+            if(show)
+                System.out.println(Arrays.toString(A));
+            quickSort(A,walli,wall-1,comp,sw,show);
+            quickSort(A,wall+1,pivot,comp,sw,show);
         }
         
     }
-    
     
     /**
      * Metodo mergeSort con complejidad O(n*lg n)
      * @param arr Arreglo sobre el cual comienza a ordenar
      * @return 
      */
-    public static long[] mergeSort(int[] arr) {
+    public static long[] mergeSort(int[] arr,boolean show) {
         long[] thrash={0,0};
         int n = arr.length;
         if (n > 1) {
@@ -211,18 +234,28 @@ public class Sorter {
               r[i - mid] = arr[i];
           }
           long[] thrash2;
-          thrash2=mergeSort(l);
+          thrash2=mergeSort(l,show);
           thrash[0]+=thrash2[0];
           thrash[1]+=thrash2[1];
-          thrash2=mergeSort(r);
+          thrash2=mergeSort(r,show);
           thrash[0]+=thrash2[0];
           thrash[1]+=thrash2[1];
-          merge(arr,l, r,thrash);
+          merge(arr,l, r,thrash,show);
+          if(show)
+            System.out.println(Arrays.toString(arr));
         }
         return thrash;
     }
     
-    private static void merge(int[] arr, int[] l, int[] r,long[] thrash) {
+    /**
+     * Metodo que utiliza mergeSort para poder unir dos pedazos del arreglo de forma ordenada
+     * Este es el metodo que realmente ordena el arreglo
+     * @param arr el arreglo a ordenar
+     * @param l punto de inicio
+     * @param r punto de terminado 
+     * @param thrash el recolector de datos para que el arreglo lleve cuenta de las comparaciones y de los intercambios
+     */
+    private static void merge(int[] arr, int[] l, int[] r,long[] thrash,boolean show) {
         int i=0,j=0,k=0;
         
         while(i<l.length && j<r.length){
@@ -236,6 +269,8 @@ public class Sorter {
                 arr[k]=r[j];
                 j++;k++;
             }
+            if(show)
+                System.out.println(Arrays.toString(arr));
         }
         while(k<arr.length){
             if(i<l.length){
@@ -244,6 +279,8 @@ public class Sorter {
             }
             if(j<r.length)
                 arr[k]=r[j];
+            if(show)
+                System.out.println(Arrays.toString(arr));
             k++;
         }
     }
@@ -311,7 +348,7 @@ public class Sorter {
      * @param scan el scanner para recibir y no crear uno nuevo
      * @return el numero de comparaciones y cambios de ese algoritmo en ese orden
      */
-    public static long[] test(int[] arreglo,Scanner scan){
+    public static long[] test(int[] arreglo,Scanner scan,boolean show){
         System.out.println("1.- SelectionSort");
         System.out.println("2.- BubbleSort");
         System.out.println("3.- InsertionSort");
@@ -323,25 +360,25 @@ public class Sorter {
         long init=System.nanoTime();
         switch(ans){
             case(1):
-                thrash=selectionSort(arreglo);
+                thrash=selectionSort(arreglo,show);
                 break;
             case(2):
-                thrash=bubbleSort(arreglo);
+                thrash=bubbleSort(arreglo,show);
                 break;
             case(3):
-                thrash=insertionSort(arreglo);
+                thrash=insertionSort(arreglo,show);
                 break;
             case(4):
-                thrash=heapSort(arreglo);
+                thrash=heapSort(arreglo,show);
                 break;
             case(5):
-                thrash=quickSort(arreglo);
+                thrash=quickSort(arreglo,show);
                 break;
             case(6):
-                thrash=mergeSort(arreglo);
+                thrash=mergeSort(arreglo,show);
                 break;
             default:
-                test(arreglo,scan);
+                test(arreglo,scan,show);
         }
         long finit=System.nanoTime();
         double tiempo=(finit-init)/Math.pow(10, 9);
@@ -412,7 +449,7 @@ public class Sorter {
      * Y SE PODRAN HACER MULTIMPLES ITERACIONES HASTA QUE EL USUARIO ESTE SATISFECHO
      */
     public static void menu(){
-        boolean cont=true,o66;
+        boolean cont=true,o66,show=false;
         Scanner scan=new Scanner(System.in);
         while(cont){
             o66=false;
@@ -422,10 +459,12 @@ public class Sorter {
                 String ans=scan.next();
                 if(ans.equalsIgnoreCase("y")){
                     arreglo=intro(scan);
+                    show=true;
                     break;
                 }
                 else if(ans.equalsIgnoreCase("n")){
                     arreglo = generate(scan);
+                    show=false;
                     break;
                 }
                 else if(ans.equalsIgnoreCase("66")){
@@ -460,7 +499,7 @@ public class Sorter {
             long[] info;
 
             
-            info=test(arreglo,scan);
+            info=test(arreglo,scan,show);
             
 
             order=Sorter.check(arreglo);
@@ -518,51 +557,132 @@ public class Sorter {
      * y los datos de cada algoritmo de ordenamiento tratando de ordenarlo. 
      */
     public static void order66(){
-        int[] arreglo=new int[100];
+        int[] arreglo=new int[100000];
+        int num=arreglo.length;
         int[] dummy;
         long[] info=new long[12];
+        double[] times=new double[6],oper=new double[6];
         arreglo=RCE(arreglo.length);
+        
+        
         
         int ans=1,insert=0;
         
         while(ans<7){
+            long init=System.nanoTime();
+            double opera=0;
             dummy=Arrays.copyOf(arreglo,arreglo.length);
             long[] thrash={0,0};
             switch(ans){
                 case(1):
                     System.out.println("Select");
-                    thrash=selectionSort(dummy);
+                    thrash=selectionSort(dummy,false);
+                    opera=Math.pow(num, 2);
                     break;
                 case(2):
                     System.out.println("Bubble");
-                    thrash=bubbleSort(dummy);
+                    thrash=bubbleSort(dummy,false);
+                    opera=Math.pow(num, 2);
                     break;
                 case(3):
                     System.out.println("Insert");
-                    thrash=insertionSort(dummy);
+                    thrash=insertionSort(dummy,false);
+                    opera=Math.pow(num, 2);
                     break;
                 case(4):
                     System.out.println("Heap");
-                    thrash=heapSort(dummy);
+                    thrash=heapSort(dummy,false);
+                    opera=num*Math.log10(num)/Math.log10(2);
                     break;
                 case(5):
                     System.out.println("Quick");
-                    thrash=quickSort(dummy);
+                    thrash=quickSort(dummy,false);
+                    opera=num*Math.log10(num)/Math.log10(2);
                     break;
                 case(6):
                     System.out.println("Merge");
-                    thrash=mergeSort(dummy);
+                    thrash=mergeSort(dummy,false);
+                    opera=num*Math.log10(num)/Math.log10(2);
                     break;
             }
+            long finit=System.nanoTime();
             System.out.println(Arrays.toString(thrash));
-            System.out.println(insert);
+            System.out.println(check(dummy));
             info[insert]=thrash[0];
             info[insert+1]=thrash[1];
+            times[ans-1]=(finit-init)/Math.pow(10, 9);
+            oper[ans-1]=opera;
             ans++;
             insert+=2;
         }
+        dummy=Arrays.copyOf(arreglo,arreglo.length);
+        mergeSort(dummy,false);
         String res=Arrays.toString(info);
         System.out.println(res);
+        res=Arrays.toString(times);
+        System.out.println(res);
+        try{
+            int count=1,infoc=0;
+            BufferedWriter write=new BufferedWriter(new FileWriter("test.txt"));
+            int array=0;
+            write.write("El arreglo a ordenar es:\n");
+            res=Arrays.toString(arreglo);
+            while(array<arreglo.length-200){
+                write.write(res.substring(array, array+200)+"\n");
+                array+=200;
+            }
+            write.write(res.substring(array, res.length()));
+            write.write("\ny tiene un total de "+arreglo.length+" elementos\n\n");
+            while(count<7){
+                String sort="",complex="";
+                switch(count){
+                    case(1):
+                        sort="selectionSort";
+                        complex="O(n^2)";
+                        break;
+                    case(2):
+                        sort="bubbleSort";
+                        complex="Theta(n^2)";
+                        break;
+                    case(3):
+                        sort="insertionSort";
+                        complex="O(n^2)";
+                        break;
+                    case(4):
+                        sort="heapSort";
+                        complex="Theta(n*lg(n))";
+                        break;
+                    case(5):
+                        sort="quickSort";
+                        complex="O(n*lg(n))";
+                        break;
+                    case(6):
+                        sort="mergeSort";
+                        complex="O(n*lg(n))";
+                        break;
+                }
+                write.write("El metodo "+sort+" ordeno el arreglo con los siguientes datos:\n");
+                write.write("El algoritmo tiene una complejidad de "+complex+", por lo tanto \nEl "
+                        + "numero de operaciones que deberia realizar es "+oper[count-1]+"\n");
+                write.write("Las operaciones reales que realizo son: \n");
+                write.write("Comparaciones= "+info[infoc]+"\tIntercambios= "+info[infoc+1]+"\n");
+                write.write("Y lo logro en un tiempo de "+times[count-1]+" segundos.");
+                write.write("\n\n");
+                infoc+=2;count++;
+            }
+            array=0;
+            write.write("El arreglo ordenado es:\n");
+            res=Arrays.toString(dummy);
+            while(array<dummy.length-200){
+                write.write(res.substring(array, array+200)+"\n");
+                array+=200;
+            }
+            write.write(res.substring(array, dummy.length));
+            write.close();
+        }
+        catch(Exception e){
+            System.out.println("Ocurrio un error y los Jedi han sobrevivido");
+        }
     }
     
 }
