@@ -164,6 +164,7 @@ public class Sorter {
      */
     public static long[] quickSort(int[] A,boolean show){
         long comparaciones=0,switches=0;
+        long[] thrash;
         if(A.length>2){
             int w=0, pivot=A.length-1;
             for(int c=0;c<pivot;c++){
@@ -178,8 +179,10 @@ public class Sorter {
             change(A,w,pivot);switches++;
             if(show)
                 System.out.println(Arrays.toString(A));
-            quickSort(A,0,w-1,comparaciones,switches,show);
-            quickSort(A,w+1,A.length-1,comparaciones,switches,show);
+            thrash=quickSort(A,0,w-1,show);
+            comparaciones+=thrash[0];switches+=thrash[1];
+            thrash=quickSort(A,w+1,A.length-1,show);
+            comparaciones+=thrash[0];switches+=thrash[1];
         }
         long[] res = {comparaciones,switches};
         return res;
@@ -193,8 +196,9 @@ public class Sorter {
      * @param walli parametro cobre el cual el arreglo comienza a ordenar
      * @param pivot parametro sobre el cual termina de arreglar y es numero sobre el cual se centra el ordenamiento
      */
-    private static void quickSort(int[] A,int walli,int pivot,long comp,long sw,boolean show){
-        comp++;
+    private static long[] quickSort(int[] A,int walli,int pivot,boolean show){
+        long comp=0,sw=0;
+        long[] res;
         if(pivot>walli){
             int wall=walli;
             for(int c=wall;c<pivot;c++){
@@ -209,10 +213,13 @@ public class Sorter {
             change(A,wall,pivot);sw++;
             if(show)
                 System.out.println(Arrays.toString(A));
-            quickSort(A,walli,wall-1,comp,sw,show);
-            quickSort(A,wall+1,pivot,comp,sw,show);
+            res=quickSort(A,walli,wall-1,show);
+            comp+=res[0];sw+=res[1];
+            res=quickSort(A,wall+1,pivot,show);
+            comp+=res[0];sw+=res[1];
         }
-        
+        long[] resu={comp,sw};
+        return resu;
     }
     
     /**
