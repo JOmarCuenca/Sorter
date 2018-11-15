@@ -38,8 +38,6 @@ public class Sorter {
             arr[x]=arr[pos];
             arr[pos]=temp;
         }
-        System.out.println("Comparaciones final= "+comparaciones);
-        System.out.println("Operaciones final= "+operaciones);
         long[] res = {comparaciones,operaciones};
         return res;
     }
@@ -61,13 +59,8 @@ public class Sorter {
                     arr[y]=arr[y+1];
                     arr[y+1]=temp;
                 }
-                if(comparacion%10000==0)
-                    System.out.println("Comparaciones= "+comparacion);
             }
         }
-        System.out.println("Final Comparaciones = "+comparacion);
-        System.out.println("Final intercambios = "+switches);
-        System.out.println("DONE");
         long[] res = {comparacion,switches};
         return res;
     }
@@ -101,11 +94,18 @@ public class Sorter {
      */
     public static long[] heapSort(int[] arr){
         long comparaciones=0,switches=0;
-        for(int i=arr.length/2;i>=0;i--)
-            heapify(arr,i,arr.length-1,comparaciones,switches);
+        long[] thrash;
+        for(int i=arr.length/2;i>=0;i--){
+            thrash=heapify(arr,i,arr.length-1);
+            comparaciones+=thrash[0];
+            switches+=thrash[1];
+        }
+        
         for(int i=arr.length-1;i>0;i--){
             change(arr,0,i);switches++;
-            heapify(arr,0,i-1,comparaciones,switches);
+            thrash=heapify(arr,0,i-1);
+            comparaciones+=thrash[0];
+            switches+=thrash[1];
         }
         long[] res = {comparaciones,switches};
         return res;
@@ -118,7 +118,9 @@ public class Sorter {
      * @param comparaciones Numero de comparaciones que se llevan 
      * @param switches Numero de switches que se llevan
      */
-    private static void heapify(int[] tree,int ord,int stop,long comparaciones,long switches){
+    private static long[] heapify(int[] tree,int ord,int stop){
+        long comparaciones=0,switches=0;
+        long[] thrash;
         int hijoi=2*ord,hijod=hijoi+1;
         int max=ord;
         
@@ -130,8 +132,12 @@ public class Sorter {
         comparaciones++;
         if(max!=ord){
             change(tree,ord,max);switches++;
-            heapify(tree,max,stop,comparaciones,switches);
+            thrash=heapify(tree,max,stop);
+            comparaciones+=thrash[0];
+            switches+=thrash[1];
         }
+        long[] res={comparaciones,switches};
+        return res;
     }
     
     /**
@@ -155,7 +161,6 @@ public class Sorter {
             quickSort(A,0,w-1,comparaciones,switches);
             quickSort(A,w+1,A.length-1,comparaciones,switches);
         }
-        System.out.println("Done");
         long[] res = {comparaciones,switches};
         return res;
         
@@ -192,7 +197,8 @@ public class Sorter {
      * @param arr Arreglo sobre el cual comienza a ordenar
      * @return 
      */
-    public static void mergeSort(int[] arr) {
+    public static long[] mergeSort(int[] arr) {
+        long[] thrash={0,0};
         int n = arr.length;
         if (n > 1) {
           int mid = n / 2;
@@ -204,88 +210,43 @@ public class Sorter {
           for (int i = mid; i < n; i++) {
               r[i - mid] = arr[i];
           }
-            //System.out.println("Feel Good Inc.");
-          mergeSort(l);
-          mergeSort(r);
-          merge(arr,l, r);
+          long[] thrash2;
+          thrash2=mergeSort(l);
+          thrash[0]+=thrash2[0];
+          thrash[1]+=thrash2[1];
+          thrash2=mergeSort(r);
+          thrash[0]+=thrash2[0];
+          thrash[1]+=thrash2[1];
+          merge(arr,l, r,thrash);
         }
+        return thrash;
     }
     
-    private static void mergeSort(int[] arr,int init,int finit) {
-        if(finit>init+1){
-            int mid=(finit+init)/2;
-            mergeSort(arr,init,mid);
-            mergeSort(arr,mid,finit);
-            for(int i=init;i<finit;i++){
-                
-            }
-        
-        
-        
-        
-        }      
-        
-        
-        /*
-        int n = arr.length;
-        if (n < 2) {
-            return;
-        }
-        int mid = n / 2;
-        int[] l = new int[mid];
-        int[] r = new int[n - mid];
-
-        for (int i = 0; i < mid; i++) {
-            l[i] = arr[i];
-        }
-        for (int i = mid; i < n; i++) {
-            r[i - mid] = arr[i];
-        }
-        //mergeSort(l, mid);
-        //mergeSort(r, n - mid);
-        //merge(arr, l, r, mid, n - mid);*/
-    }
-    
-    private static void merge(int[] arr, int[] l, int[] r) {
+    private static void merge(int[] arr, int[] l, int[] r,long[] thrash) {
         int i=0,j=0,k=0;
         
         while(i<l.length && j<r.length){
+            thrash[0]++;
             if(l[i]<r[j]){
                 arr[k]=l[i];
                 i++;k++;
             }
             else{
+                thrash[1]++;
                 arr[k]=r[j];
                 j++;k++;
             }
-            //System.out.println(Arrays.toString(arr));
         }
         while(k<arr.length){
-            if(i<l.length)
+            if(i<l.length){
                 arr[k]=l[i];
+                thrash[1]++;
+            }
             if(j<r.length)
                 arr[k]=r[j];
             k++;
         }
-        
-        /*int i = 0, j = 0, k = 0;
-        while (i < left && j < right) {
-            if (l[i] < r[j]) {
-                arr[k++] = l[i++];
-            }
-            else {
-                arr[k++] = r[j++];
-            }
-        }
-        while (i < left) {
-            arr[k++] = l[i++];
-        }
-        while (j < right) {
-            arr[k++] = r[j++];
-        }*/
     }
-    
-    
     
     /**
      * Metodo para determinar si un arreglo ya esta ordenado
@@ -302,8 +263,6 @@ public class Sorter {
             if(arr[i]>arr[i+1])
                 return false;
         }
-        //time[1]=System.nanoTime();
-        //System.out.println("N= "+String.valueOf((time[1]-time[0])/Math.pow(10, 9)));
         return true;
     }
     
@@ -329,7 +288,7 @@ public class Sorter {
         Random ran=new Random();
         int[] res=new int[num];
         for(int i=0;i<num;i++)
-            res[i]=ran.nextInt(10000);
+            res[i]=ran.nextInt(100000);
         return res;
     }
     
@@ -346,34 +305,199 @@ public class Sorter {
     }
     
     /**
+     * Metodo que realiza la llamada al algoritmo deseado por el usuario
+     * Tambien mide el tiempo en segundos de lo que se tarda en ordenar el arreglo
+     * @param arreglo el arreglo a ordenar
+     * @param scan el scanner para recibir y no crear uno nuevo
+     * @return el numero de comparaciones y cambios de ese algoritmo en ese orden
+     */
+    public static long[] test(int[] arreglo,Scanner scan){
+        System.out.println("1.- SelectionSort");
+        System.out.println("2.- BubbleSort");
+        System.out.println("3.- InsertionSort");
+        System.out.println("4.- HeapSort");
+        System.out.println("5.- QuickSort");
+        System.out.println("6.- MergeSort");
+        int ans=scan.nextInt();
+        long[] thrash={0,0};
+        long init=System.nanoTime();
+        switch(ans){
+            case(1):
+                thrash=selectionSort(arreglo);
+                break;
+            case(2):
+                thrash=bubbleSort(arreglo);
+                break;
+            case(3):
+                thrash=insertionSort(arreglo);
+                break;
+            case(4):
+                thrash=heapSort(arreglo);
+                break;
+            case(5):
+                thrash=quickSort(arreglo);
+                break;
+            case(6):
+                thrash=mergeSort(arreglo);
+                break;
+            default:
+                test(arreglo,scan);
+        }
+        long finit=System.nanoTime();
+        double tiempo=(finit-init)/Math.pow(10, 9);
+        System.out.println("El tiempo transcurrido en segundos es: "+String.valueOf(tiempo));
+        return thrash;
+    } 
+    
+    /**
+     * Metodo que permite obtener datos introducidos por el usuario
+     * @param scan Scanner que recibe los numero (para no generar otro scanner)
+     * @return Regresa el arreglo del usuario
+     */
+    private static int[] intro(Scanner scan){
+        System.out.print("Cuantos numero vas a introducir? ");
+        int [] res;
+        int quantity=scan.nextInt();
+        if(quantity<1){
+            System.out.println("Ya deja de jugar");
+            res=intro(scan);
+        }
+        else{
+            res=new int[quantity];
+            for(int i=0;i<quantity;i++){
+                System.out.print("Dame un numero: ");
+                res[i]=scan.nextInt();
+            }
+        }
+        return res;
+    }
+    
+    /**
+     * Metodo que va a manejar el generador de arreglos automatico
+     * @param scan Scanner para no generar otro 
+     * @return Regresa el arreglo que el usuario solicito
+     */
+    private static int[] generate(Scanner scan){
+        int[] arreglo;
+        System.out.print("De que tamanio sera el arreglo? ");
+        int ans=scan.nextInt();
+        if(ans<1){
+            System.out.println("Ya deja de jugar");
+            arreglo=generate(scan);
+        }
+        else{
+            while(true){
+                System.out.println("Respuestas en forma numerica por favor");
+                System.out.print("Deseas usar Worst Case (WCE,1),Random Case (RCE,2), Best Case (BCE,3)? ");
+                int type=scan.nextInt();
+                if(type==1){
+                    arreglo=WCE(ans);
+                    break;
+                }
+                else if(type==2){
+                    arreglo=RCE(ans);
+                    break;
+                }
+                else if(type==3){
+                    arreglo=BCE(ans);
+                    break;
+                }
+            }
+        }
+        return arreglo;
+    }
+    
+    /**
      * ESTE SERA EL METODO PARA EL MENU 
      * Y SE PODRAN HACER MULTIMPLES ITERACIONES HASTA QUE EL USUARIO ESTE SATISFECHO
      */
     public static void menu(){
-        boolean cont=true;
+        boolean cont=true,o66;
+        Scanner scan=new Scanner(System.in);
         while(cont){
-         
-            //Input del usuario
+            o66=false;
+            int[] arreglo={0};
+            while(true){
+                System.out.println("Te gustaria introducir tu los datos? (y/n) \nEn caso de que no los introduzcas, yo generare un array para trabajar"); 
+                String ans=scan.next();
+                if(ans.equalsIgnoreCase("y")){
+                    arreglo=intro(scan);
+                    break;
+                }
+                else if(ans.equalsIgnoreCase("n")){
+                    arreglo = generate(scan);
+                    break;
+                }
+                else if(ans.equalsIgnoreCase("66")){
+                    o66=true;
+                    order66();
+                    break;
+                }
+                else
+                    System.out.println("Lo siento no te entendi \n");
+            }
+            if(o66)
+                break;
+            
+            int size=arreglo.length;
 
-            Scanner scan=new Scanner(System.in);
-            System.out.print("De qué tamaño será el arreglo?  ");
-            int size=scan.nextInt();
-            //scan.close();
+            boolean order=Sorter.check(arreglo);
+            if(order)
+                System.out.println("El arreglo esta ordenado");
+            else
+                System.out.println("El arreglo NO esta ordenado");
+            if(100000000>size && size>1000){
+                String arregloS=Arrays.toString(arreglo).substring(0, 1000);
+                System.out.println(arregloS+"...");
+            }
+            else
+                System.out.println(Arrays.toString(arreglo));
 
-
-
-            //fin del input
-
-            //creacion del arreglo con el tamanio especificado y el metodo especificado
-            int[] happy=BCE(size);
-            int[] arreglo=RCE(size);
-            int[] killme=WCE(size);
-
-            System.out.println(check(arreglo));
-            System.out.println("El arreglo es= "+Arrays.toString(arreglo));
+            if(size>=100000000)
+                System.out.println("Common dude... trust me");
+            
+            
+            long[] info;
 
             
+            info=test(arreglo,scan);
+            
+
+            order=Sorter.check(arreglo);
+            if(order)
+                System.out.println("El arreglo esta ordenado");
+            else
+                System.out.println("El arreglo NO esta ordenado");
+            if(100000000>size && size>1000){
+                String arregloS=Arrays.toString(arreglo).substring(0, 1000);
+                System.out.println(arregloS+"...");
+            }
+            else
+                System.out.println(Arrays.toString(arreglo));
+            if(size>=100000000)
+                System.out.println("Common dude... trust me");
+            
+            System.out.println("El numero de comparaciones realizadas por el algoritmo fueron: "+info[0]);
+            System.out.println("El numero de intercambios realizados por el algoritmo fueron: "+info[1]);
+            
+            while(true){
+                System.out.print("Otra ronda? (y/n) "); 
+                String ans=scan.next();
+                if(ans.equalsIgnoreCase("y")){
+                    break;
+                }
+                else if(ans.equalsIgnoreCase("n")){
+                    cont=false;
+                    break;
+                }
+                else
+                    System.out.println("Lo siento no te entendi \n");
+            }
+            
         }
+        
+        scan.close();
+        System.out.println("Thank you...");
         
     }
     
@@ -389,8 +513,56 @@ public class Sorter {
         A[b]=temp;
     }
     
+    /**
+     * Metodo para generar un reporte en un .txt que contiene un arreglo dosordenado 
+     * y los datos de cada algoritmo de ordenamiento tratando de ordenarlo. 
+     */
     public static void order66(){
+        int[] arreglo=new int[100];
+        int[] dummy;
+        long[] info=new long[12];
+        arreglo=RCE(arreglo.length);
         
+        int ans=1,insert=0;
+        
+        while(ans<7){
+            dummy=Arrays.copyOf(arreglo,arreglo.length);
+            long[] thrash={0,0};
+            switch(ans){
+                case(1):
+                    System.out.println("Select");
+                    thrash=selectionSort(dummy);
+                    break;
+                case(2):
+                    System.out.println("Bubble");
+                    thrash=bubbleSort(dummy);
+                    break;
+                case(3):
+                    System.out.println("Insert");
+                    thrash=insertionSort(dummy);
+                    break;
+                case(4):
+                    System.out.println("Heap");
+                    thrash=heapSort(dummy);
+                    break;
+                case(5):
+                    System.out.println("Quick");
+                    thrash=quickSort(dummy);
+                    break;
+                case(6):
+                    System.out.println("Merge");
+                    thrash=mergeSort(dummy);
+                    break;
+            }
+            System.out.println(Arrays.toString(thrash));
+            System.out.println(insert);
+            info[insert]=thrash[0];
+            info[insert+1]=thrash[1];
+            ans++;
+            insert+=2;
+        }
+        String res=Arrays.toString(info);
+        System.out.println(res);
     }
     
 }
