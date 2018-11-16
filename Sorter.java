@@ -21,6 +21,7 @@ public class Sorter {
     /**
      * Metodo selectionSort que tiene un tiempo de ordenamiento de O(n^2)
      * @param arr Ordena el arreglo de int[] que entra como paramentro
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
     public static long[] selectionSort(int[] arr,boolean show){
@@ -47,7 +48,8 @@ public class Sorter {
     
     /**
      * Bubblesort que ordena un arreglo en Theta(n^2)
-     * @param arr 
+     * @param arr Arreglo a ordenar
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
     public static long[] bubbleSort(int[] arr,boolean show){
@@ -77,6 +79,7 @@ public class Sorter {
     /**
      * Metodo insertionSort con un procedimiento de O(n^2)
      * @param arr arreglo en int[] que es ordenado
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
     public static long[] insertionSort(int[] arr,boolean show){
@@ -101,6 +104,7 @@ public class Sorter {
     /**
      * heapSort con complejidad Theta(n*lg n)
      * @param arr Arreglo a ordenar
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
     public static long[] heapSort(int[] arr,boolean show){
@@ -160,6 +164,7 @@ public class Sorter {
      * sin embargo el algoritmo puede llegar a ser O(n^2) 
      * en los peores de los casos.
      * @param A Arreglo de integers a ser ordenados 
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return Regresa un arreglo de long que contiene el numero de operaciones y comparaciones
      */
     public static long[] quickSort(int[] A,boolean show){
@@ -195,6 +200,8 @@ public class Sorter {
      * @param A Arreglo a ser ordenado
      * @param walli parametro cobre el cual el arreglo comienza a ordenar
      * @param pivot parametro sobre el cual termina de arreglar y es numero sobre el cual se centra el ordenamiento
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
+     * @return 
      */
     private static long[] quickSort(int[] A,int walli,int pivot,boolean show){
         long comp=0,sw=0;
@@ -225,6 +232,7 @@ public class Sorter {
     /**
      * Metodo mergeSort con complejidad O(n*lg n)
      * @param arr Arreglo sobre el cual comienza a ordenar
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return 
      */
     public static long[] mergeSort(int[] arr,boolean show) {
@@ -352,9 +360,10 @@ public class Sorter {
      * Tambien mide el tiempo en segundos de lo que se tarda en ordenar el arreglo
      * @param arreglo el arreglo a ordenar
      * @param scan el scanner para recibir y no crear uno nuevo
+     * @param show Boolean que muestra las corridas en caso de que yo haya introducido los valores
      * @return el numero de comparaciones y cambios de ese algoritmo en ese orden
      */
-    public static long[] test(int[] arreglo,Scanner scan,boolean show){
+    private static long[] test(int[] arreglo,Scanner scan,boolean show){
         System.out.println("1.- SelectionSort");
         System.out.println("2.- BubbleSort");
         System.out.println("3.- InsertionSort");
@@ -562,8 +571,8 @@ public class Sorter {
      * Metodo para generar un reporte en un .txt que contiene un arreglo dosordenado 
      * y los datos de cada algoritmo de ordenamiento tratando de ordenarlo. 
      */
-    public static void order66(){
-        int[] arreglo=new int[100000];
+    private static void order66(){
+        int[] arreglo=new int[1000000];
         int num=arreglo.length;
         int[] dummy;
         long[] info=new long[12];
@@ -687,6 +696,7 @@ public class Sorter {
         }
         catch(Exception e){
             System.out.println("Ocurrio un error y los Jedi han sobrevivido");
+            System.out.println("Contacte al emperador para mayores instrucciones");
         }
     }
     
