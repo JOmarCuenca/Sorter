@@ -630,15 +630,6 @@ public class Sorter {
         try{
             int count=1,infoc=0;
             BufferedWriter write=new BufferedWriter(new FileWriter("test.txt"));
-            int array=0;
-            write.write("El arreglo a ordenar es:\n");
-            res=Arrays.toString(arreglo);
-            while(array<arreglo.length-200){
-                write.write(res.substring(array, array+200)+"\n");
-                array+=200;
-            }
-            write.write(res.substring(array, res.length()));
-            write.write("\ny tiene un total de "+arreglo.length+" elementos\n\n");
             while(count<7){
                 String sort="",complex="";
                 switch(count){
@@ -669,21 +660,29 @@ public class Sorter {
                 }
                 write.write("El metodo "+sort+" ordeno el arreglo con los siguientes datos:\n");
                 write.write("El algoritmo tiene una complejidad de "+complex+", por lo tanto \nEl "
-                        + "numero de operaciones que deberia realizar es "+oper[count-1]+"\n");
+                        + "numero de intercambios que deberia realizar es "+oper[count-1]+"\n");
                 write.write("Las operaciones reales que realizo son: \n");
                 write.write("Comparaciones= "+info[infoc]+"\tIntercambios= "+info[infoc+1]+"\n");
                 write.write("Y lo logro en un tiempo de "+times[count-1]+" segundos.");
                 write.write("\n\n");
                 infoc+=2;count++;
             }
-            array=0;
-            write.write("El arreglo ordenado es:\n");
-            res=Arrays.toString(dummy);
-            while(array<dummy.length-200){
+            write.write("\n\nEl arreglo tiene un total de "+arreglo.length+" elementos\n\n");
+            int array=0;
+            write.write("Los primeros 2000 elementos del arreglo a ordenar son:\n");
+            res=Arrays.toString(arreglo);
+            while(array<2000){
                 write.write(res.substring(array, array+200)+"\n");
                 array+=200;
             }
-            write.write(res.substring(array, dummy.length));
+            write.write("\n");
+            array=0;
+            write.write("El arreglo ordenado es:\n");
+            res=Arrays.toString(dummy);
+            while(array<2000){
+                write.write(res.substring(array, array+200)+"\n");
+                array+=200;
+            }
             write.close();
         }
         catch(Exception e){
